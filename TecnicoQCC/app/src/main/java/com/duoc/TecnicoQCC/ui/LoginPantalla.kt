@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 
 @Composable
 
-fun QCCLoginScreenSimple() {
+fun QCCLoginScreenSimple(onLoginSuccess: () -> Unit) {
     var codigoUsuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -62,7 +62,7 @@ fun QCCLoginScreenSimple() {
 
         // BOTÓN PRINCIPAL
         Button(
-            onClick = {},
+            onClick = {onLoginSuccess()},
             modifier = Modifier.fillMaxWidth().height(50.dp)
         ) {
             Text("Ingresar")
