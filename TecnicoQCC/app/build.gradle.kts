@@ -55,5 +55,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("androidx.compose.material:material-icons-extended")
+<<<<<<< Updated upstream
     implementation("androidx.navigation:navigation-compose:2.7.7")
+=======
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+>>>>>>> Stashed changes
 }
