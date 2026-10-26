@@ -2,25 +2,50 @@ package com.duoc.TecnicoQCC.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InicioScreen() {
+fun InicioScreen(
+    onIrAPerfil: () -> Unit = {} // Callback para navegar
+) {
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Panel de Control") },
+                actions = {
+                    // Botón de Perfil en la esquina superior derecha
+                    IconButton(onClick = onIrAPerfil) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Ir al Perfil"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {
-            // Aquí ira el boton de salida del inicio
+            // Aquí irá el botón de salida del inicio
         }
     ) { paddingValues ->
 
+        // Se agrega verticalScroll para que el contenido no se corte en pantallas pequeñas
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
         ) {
 
             // Encabezado
@@ -29,14 +54,19 @@ fun InicioScreen() {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text(text = "PANEL DE CONTROL")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Bienvenido de nuevo, Matias")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Revisa el estado de tus levantamientos y continúa tu trabajo.")
+                Text(
+                    text = "Bienvenido de nuevo, Matias",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Revisa el estado de tus levantamientos y continúa tu trabajo.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
 
-            //  Botones
+            // Botones principales
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,13 +100,13 @@ fun InicioScreen() {
                             modifier = Modifier.size(48.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("📷")
+                            Text("📷", fontSize = 24.sp)
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Column {
-                            Text(text = "Escanear QR")
+                            Text(text = "Escanear QR", fontWeight = FontWeight.Bold)
                             Text(text = "Iniciar nuevo levantamiento")
                         }
                     }
@@ -91,20 +121,18 @@ fun InicioScreen() {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                // Tarjeta 1
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "📄 12")
+                        Text(text = "📄 12", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text(text = "Total de racks")
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Tarjeta 2
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "✅ 8")
+                        Text(text = "✅ 8", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text(text = "Evaluaciones completadas")
                     }
                 }
@@ -112,13 +140,13 @@ fun InicioScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            //  Racks registrados
+            // Racks registrados
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text(text = "Racks registrados")
+                Text(text = "Racks registrados", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Text(text = "Consulta y administra las inspecciones recientes.")
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -148,7 +176,7 @@ fun InicioScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text(text = "RACK-001")
+                        Text(text = "RACK-001", fontWeight = FontWeight.Bold)
                         Text(text = "Sala principal · Zona A")
 
                         Spacer(modifier = Modifier.height(12.dp))

@@ -8,12 +8,12 @@ class PerfilRepository {
 
     fun obtenerPerfilUsuario(): PerfilUsuario{
         return PerfilUsuario(
-            inicialesAvatar = "MV",
+            inicialesAvatar = "LP",
             tipoPerfil = "PERFIL TÉCNICO",
-            nombre = "Matias Vera",
+            nombre = "Lucas Pizarro",
             cargo = "Inspecctor técnico",
             empresa = "CMC360 SPA",
-            correo = "matiaverascr7@duocuc,cl",
+            correo = "luc.piza@duocuc,cl",
             evaluacionesCompletadas = 28,
             racksRevisados = 16
 

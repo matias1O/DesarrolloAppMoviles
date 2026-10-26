@@ -26,7 +26,6 @@ MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavegacion()
-                    PantallaPerfil()
                 }
             }
         }
