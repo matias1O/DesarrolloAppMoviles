@@ -35,7 +35,9 @@ fun AppNavegacion() {
 
         composable("inicio") {
             InicioScreen(
-                onIrAPerfil = { navController.navigate("perfil") }
+                onIrAPerfil = { navController.navigate("perfil") },
+                onNuevoLevantamiento = { navController.navigate("nuevo_levantamiento")},
+                onVerDetallesClick = { navController.navigate("detalle_rack") }
             )
         }
 
@@ -44,5 +46,21 @@ fun AppNavegacion() {
                 onVolverAInicio = { navController.popBackStack() }
             )
         }
+
+        composable("nuevo_levantamiento"){
+            NuevoLevantamientoPantalla(
+                onVolverClick = { navController.popBackStack() },
+                onGuardarClick = { nuevoRack ->
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("detalle_rack"){
+            DetalleRackPantalla(
+                onVolverClick = { navController.popBackStack() }
+            )
+        }
+
     }
 }

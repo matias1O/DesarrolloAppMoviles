@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(
-    onIrAPerfil: () -> Unit = {} // Callback para navegar
+    onIrAPerfil: () -> Unit = {}, // Callback para navegar
+    onNuevoLevantamiento: () -> Unit = {},
+    onVerDetallesClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -73,7 +75,7 @@ fun InicioScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 Button(
-                    onClick = { /* TODO: Navegar a nueva vista */ },
+                    onClick =  onNuevoLevantamiento,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -182,7 +184,7 @@ fun InicioScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedButton(
-                            onClick = { /* TODO */ },
+                            onClick =  onVerDetallesClick,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Ver detalles")
