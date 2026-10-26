@@ -18,7 +18,7 @@ import com.duoc.TecnicoQCC.repository.UserPreferences
 import kotlinx.coroutines.launch
 
 @Composable
-fun QCCLoginScreenSimple(onLoginSuccess: () -> Unit) {
+fun QCCLoginScreenSimple(onLoginSuccess: (String) -> Unit) {
     var codigoUsuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -70,7 +70,7 @@ fun QCCLoginScreenSimple(onLoginSuccess: () -> Unit) {
                 if (codigoUsuario.isNotBlank()) {
                     scope.launch {
                         userPreferences.guardarSesion(codigoUsuario)
-                        onLoginSuccess()
+                        onLoginSuccess(codigoUsuario)
                     }
                 }
             },

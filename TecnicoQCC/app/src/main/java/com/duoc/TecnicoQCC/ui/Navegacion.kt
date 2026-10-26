@@ -16,27 +16,36 @@ fun AppNavegacion() {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
 
-    // Leemos el estado guardado de la sesión
     val estaLogueado by userPreferences.estaLogueado.collectAsState(initial = false)
 
-    // Si ya está logueado, inicia directo en "inicio"
-    val pantallaInicial = if (estaLogueado) "inicio" else "login"
+    // Apunta a la ruta de inicio que incluye el parámetro
+    val pantallaInicial = if (estaLogueado) "inicio/Usuario" else "login"
 
     NavHost(navController = navController, startDestination = pantallaInicial) {
+
         composable("login") {
             QCCLoginScreenSimple(
-                onLoginSuccess = {
-                    navController.navigate("inicio") {
-                        popUpTo("login") { inclusive = true } // Limpia el historial para no regresar al login
+                onLoginSuccess = { nombreIngresado ->
+                    navController.navigate("inicio/$nombreIngresado") {
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("inicio") {
+        //ruta de inicio unificada con todas las acciones
+        composable("inicio/{nombreUsuario}") { backStackEntry ->
+            val nombre = backStackEntry.arguments?.getString("nombreUsuario") ?: "Usuario"
+
             InicioScreen(
+                nombreUsuario = nombre,
                 onIrAPerfil = { navController.navigate("perfil") },
-                onNuevoLevantamiento = { navController.navigate("nuevo_levantamiento")},
+                onCerrarSesion = {
+                    navController.navigate("login") {
+                        popUpTo(0) // Limpia el historial
+                    }
+                },
+                onNuevoLevantamiento = { navController.navigate("nuevo_levantamiento") },
                 onVerDetallesClick = { navController.navigate("detalle_rack") }
             )
         }
@@ -61,6 +70,5 @@ fun AppNavegacion() {
                 onVolverClick = { navController.popBackStack() }
             )
         }
-
     }
 }

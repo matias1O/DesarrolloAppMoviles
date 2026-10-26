@@ -6,43 +6,68 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.duoc.TecnicoQCC.repository.UserPreferences
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(
-    onIrAPerfil: () -> Unit = {}, // Callback para navegar
+    nombreUsuario: String,
+    onIrAPerfil: () -> Unit = {}, //
     onNuevoLevantamiento: () -> Unit = {},
-    onVerDetallesClick: () -> Unit = {}
+    onVerDetallesClick: () -> Unit = {},
+    onCerrarSesion: ()-> Unit = {}
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val userPreferences = remember { UserPreferences(context) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Panel de Control") },
                 actions = {
-                    // Botón de Perfil en la esquina superior derecha
+                    // Botón de Perfil original
                     IconButton(onClick = onIrAPerfil) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Ir al Perfil"
                         )
                     }
+
+                    //Botón de Cerrar Sesión
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                userPreferences.cerrarSesion()
+                                onCerrarSesion()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar Sesión",
+                            tint = androidx.compose.ui.graphics.Color.Red
+                        )
+                    }
                 }
             )
-        },
-        bottomBar = {
-            // Aquí irá el botón de salida del inicio
         }
     ) { paddingValues ->
 
-        // Se agrega verticalScroll para que el contenido no se corte en pantallas pequeñas
+        // verticalScroll sirve para que el contenido no se corte en pantallas pequeñas
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,7 +82,7 @@ fun InicioScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Bienvenido de nuevo, Matias",
+                    text = "Bienvenido de nuevo, $nombreUsuario",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
