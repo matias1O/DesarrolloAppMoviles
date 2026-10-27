@@ -21,7 +21,10 @@ import com.duoc.TecnicoQCC.repository.UserPreferences
 import kotlinx.coroutines.launch
 
 @Composable
-fun QCCLoginScreenSimple(onLoginSuccess: (String) -> Unit) {
+fun QCCLoginScreenSimple(
+    onLoginSuccess: (String) -> Unit,
+    onAbrirCamara: () -> Unit = {} // <-- 1. Nuevo parámetro agregado aquí
+) {
     var codigoUsuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -112,14 +115,14 @@ fun QCCLoginScreenSimple(onLoginSuccess: (String) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    shape = RoundedCornerShape(12.dp) // Bordes redondeados consistentes
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Ingresar", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ACCESO ALTERNATIVO
+                // ACCESO ALTERNATIVO CAMARA
                 Text(
                     text = "Acceso alternativo",
                     fontSize = 14.sp,
@@ -128,7 +131,7 @@ fun QCCLoginScreenSimple(onLoginSuccess: (String) -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = { /* Acción futura para QR */ },
+                    onClick = onAbrirCamara, //
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

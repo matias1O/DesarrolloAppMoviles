@@ -30,7 +30,8 @@ fun InicioScreen(
     onIrAPerfil: () -> Unit = {},
     onNuevoLevantamiento: () -> Unit = {},
     onVerDetallesClick: () -> Unit = {},
-    onCerrarSesion: ()-> Unit = {}
+    onCerrarSesion: ()-> Unit = {},
+    onAbrirCamara: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -40,7 +41,7 @@ fun InicioScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Panel de Control", fontWeight = FontWeight.Bold) },
-                // Aplicamos el color principal de tu Theme.kt a la barra superior
+                // Aplicamos el color principal a Theme.kt
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -58,7 +59,7 @@ fun InicioScreen(
                             }
                         }
                     ) {
-                        // Dejamos la X blanca o del color de contraste para mantener armonía
+
                         Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar Sesión")
                     }
                 }
@@ -117,7 +118,7 @@ fun InicioScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { /* TODO: Abrir cámara/QR */ },
+                        .clickable { onAbrirCamara() },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -147,7 +148,7 @@ fun InicioScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- ESTADÍSTICAS (Ahora en una fila lado a lado) ---
+            // ESTADÍSTICAS
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -179,7 +180,7 @@ fun InicioScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- BUSCADOR Y LISTA ---
+            // BUSCADOR Y LISTA
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
