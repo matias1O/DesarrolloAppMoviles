@@ -1,5 +1,6 @@
 package com.duoc.TecnicoQCC.ui
 
+import androidx.compose.foundation.Image // <-- Importante para cargar la imagen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,18 +13,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource // <-- Importante para leer el archivo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.duoc.TecnicoQCC.R // <-- Importante para acceder a tus recursos (res)
 import com.duoc.TecnicoQCC.repository.UserPreferences
 import kotlinx.coroutines.launch
 
 @Composable
 fun QCCLoginScreenSimple(
     onLoginSuccess: (String) -> Unit,
-    onAbrirCamara: () -> Unit = {} // <-- 1. Nuevo parámetro agregado aquí
+    onAbrirCamara: () -> Unit = {}
 ) {
     var codigoUsuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -32,14 +35,24 @@ fun QCCLoginScreenSimple(
     val scope = rememberCoroutineScope()
     val userPreferences = remember { UserPreferences(context) }
 
-    // Usamos un Box para que el fondo ocupe toda la pantalla
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        // Envolvemos el formulario en una tarjeta (Card) para que resalte
+
+        //LOGO
+        Image(
+            painter = painterResource(id = R.drawable.logo1),
+            contentDescription = "Logo de la empresa",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 48.dp, end = 24.dp)
+                .size(84.dp)
+        )
+
+        // TARJETA DEL FORMULARIO
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,7 +67,6 @@ fun QCCLoginScreenSimple(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // TÍTULO
                 Text(
                     text = "Bienvenido a QCC",
                     fontSize = 26.sp,
@@ -70,7 +82,6 @@ fun QCCLoginScreenSimple(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // CAMPO DE USUARIO
                 OutlinedTextField(
                     value = codigoUsuario,
                     onValueChange = { codigoUsuario = it },
@@ -85,7 +96,6 @@ fun QCCLoginScreenSimple(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // CAMPO DE CONTRASEÑA
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -102,13 +112,12 @@ fun QCCLoginScreenSimple(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // BOTÓN PRINCIPAL
                 Button(
                     onClick = {
                         if (codigoUsuario.isNotBlank()) {
                             scope.launch {
                                 userPreferences.guardarSesion(codigoUsuario)
-                                onLoginSuccess(codigoUsuario) // Envía el nombre a la navegación
+                                onLoginSuccess(codigoUsuario)
                             }
                         }
                     },
@@ -122,7 +131,6 @@ fun QCCLoginScreenSimple(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ACCESO ALTERNATIVO CAMARA
                 Text(
                     text = "Acceso alternativo",
                     fontSize = 14.sp,
@@ -131,7 +139,7 @@ fun QCCLoginScreenSimple(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = onAbrirCamara, //
+                    onClick = onAbrirCamara,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
