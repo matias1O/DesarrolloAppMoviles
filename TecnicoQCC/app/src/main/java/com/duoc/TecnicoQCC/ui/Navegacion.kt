@@ -1,5 +1,10 @@
 package com.duoc.TecnicoQCC.ui
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +32,7 @@ fun AppNavegacion() {
         viewModelStoreOwner = (context as androidx.activity.ComponentActivity)
     )
 
-    // Código guardado en Room (null si no hay sesión) y si ya terminamos de leerlo
+    // Código guardado (null si no hay sesión) y si ya terminamos de leerlo
     var codigoGuardado by remember { mutableStateOf<String?>(null) }
     var roomListo by remember { mutableStateOf(false) }
 
@@ -36,13 +41,43 @@ fun AppNavegacion() {
         roomListo = true
     }
 
-    // Hasta que Room responda no se crea el NavHost
+    // Hasta que termine de leer no se crea el NavHost
     if (!roomListo) return
 
-    // El destino inicial es la ruta SIN valores concretos; el código viaja como valor por defecto
     val destinoInicial = if (codigoGuardado != null) "inicio/{nombreUsuario}" else "login"
 
-    NavHost(navController = navController, startDestination = destinoInicial) {
+    NavHost(
+        navController = navController,
+        startDestination = destinoInicial,
+        // Entrada hacia adelante (desliza desde la derecha)
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        // Salida hacia adelante (se desplaza a la izquierda)
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        // Regreso/Atrás (la pantalla anterior entra desde la izquierda)
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        // Salida al ir Atrás (la pantalla actual se desliza a la derecha)
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        }
+    ) {
 
         composable("login") {
             QCCLoginScreenSimple(
@@ -55,7 +90,7 @@ fun AppNavegacion() {
             )
         }
 
-        //ruta de inicio unificada con todas las acciones
+        // Ruta de inicio unificada con todas las acciones
         composable(
             route = "inicio/{nombreUsuario}",
             arguments = listOf(
@@ -100,17 +135,17 @@ fun AppNavegacion() {
             )
         }
 
-        composable("nuevo_levantamiento"){
+        composable("nuevo_levantamiento") {
             NuevoLevantamientoPantalla(
                 onVolverClick = { navController.popBackStack() },
                 onGuardarClick = { nuevoRack ->
-                    rackViewModel.agregarRack((nuevoRack))
+                    rackViewModel.agregarRack(nuevoRack)
                     navController.popBackStack()
                 }
             )
         }
 
-        composable("detalle_rack"){
+        composable("detalle_rack") {
             DetalleRackPantalla(
                 onVolverClick = { navController.popBackStack() }
             )
