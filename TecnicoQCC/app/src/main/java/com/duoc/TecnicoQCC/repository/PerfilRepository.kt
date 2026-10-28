@@ -8,7 +8,7 @@ class PerfilRepository {
 
     fun obtenerPerfilUsuario(): PerfilUsuario{
         return PerfilUsuario(
-            inicialesAvatar = "LP",
+            inicialesAvatar = "\uD83D\uDC64",
             tipoPerfil = "PERFIL TÉCNICO",
             nombre = "Lucas Pizarro",
             cargo = "Inspecctor técnico",
