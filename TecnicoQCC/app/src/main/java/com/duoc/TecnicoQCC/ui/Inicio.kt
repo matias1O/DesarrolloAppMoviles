@@ -26,7 +26,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(
-    nombreUsuario: String,
+    nombreUsuario: String = "Usuario",
+    rackViewModel: com.duoc.TecnicoQCC.viewmodel.RackViewModel,
     onIrAPerfil: () -> Unit = {},
     onNuevoLevantamiento: () -> Unit = {},
     onVerDetallesClick: () -> Unit = {},
@@ -49,7 +50,10 @@ fun InicioScreen(
                 ),
                 actions = {
                     IconButton(onClick = onIrAPerfil) {
-                        Icon(imageVector = Icons.Default.Person, contentDescription = "Ir al Perfil")
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Ir al Perfil"
+                        )
                     }
                     IconButton(
                         onClick = {
@@ -60,7 +64,10 @@ fun InicioScreen(
                         }
                     ) {
 
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar Sesión")
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar Sesión"
+                        )
                     }
                 }
             )
@@ -110,7 +117,11 @@ fun InicioScreen(
                     shape = RoundedCornerShape(12.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(text = "+ Agregar nuevo levantamiento", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "+ Agregar nuevo levantamiento",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -132,15 +143,26 @@ fun InicioScreen(
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
+                                .background(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    RoundedCornerShape(8.dp)
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text("📷", fontSize = 24.sp)
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text(text = "Escanear QR", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondaryContainer)
-                            Text(text = "Iniciar nuevo levantamiento", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f))
+                            Text(
+                                text = "Escanear QR",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Text(
+                                text = "Iniciar nuevo levantamiento",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                            )
                         }
                     }
                 }
@@ -155,28 +177,50 @@ fun InicioScreen(
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Tarjeta 1: Total dinámico según el ViewModel
                 Card(
                     modifier = Modifier.weight(1f),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "📄 12", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(text = "Racks totales", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = "📄 ${rackViewModel.racks.size}", // <-- React: `📄 ${racks.length}`
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Racks totales",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
 
+                // Tarjeta 2: Completados dinámicos (calcula cuántos tienen estado == "Completada")
                 Card(
                     modifier = Modifier.weight(1f),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "✅ 8", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = androidx.compose.ui.graphics.Color(0xFF4CAF50)) // Verde para éxito
-                        Text(text = "Completados", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        val completados = rackViewModel.racks.count { it.estado == "Completada" }
+                        Text(
+                            text = "✅ $completados", // <-- React: racks.filter(r => r.estado === "Completada").length
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFF16A34A)
+                        )
+                        Text(
+                            text = "Completados",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -204,41 +248,101 @@ fun InicioScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        // Un rectángulo sutil para representar donde iría la foto del rack
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(120.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Imagen del Rack", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
+                // BUCLE DINÁMICO: En React sería rackViewModel.racks.map(rack => <Card />)
+                rackViewModel.racks.forEach { rack ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            // Rectángulo para la imagen
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(120.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                        RoundedCornerShape(8.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "Imagen del Rack",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
-                        Text(text = "RACK-001", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Text(text = "Sala principal · Zona A", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            // Fila con el ID del rack y su Badge de estado dinámico
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = rack.id,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                                Surface(
+                                    color = if (rack.estado == "Completada") androidx.compose.ui.graphics.Color(
+                                        0xFFDCFCE7
+                                    ) else androidx.compose.ui.graphics.Color(0xFFFEF3C7),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(
+                                        text = rack.estado,
+                                        color = if (rack.estado == "Completada") androidx.compose.ui.graphics.Color(
+                                            0xFF166534
+                                        ) else androidx.compose.ui.graphics.Color(0xFFB45309),
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.padding(
+                                            horizontal = 8.dp,
+                                            vertical = 2.dp
+                                        )
+                                    )
+                                }
+                            }
 
-                        OutlinedButton(
-                            onClick = onVerDetallesClick,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text("Ver detalles")
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            // Nombre y Área dinámicos
+                            Text(
+                                text = "${rack.nombre} · ${rack.area}",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            OutlinedButton(
+                                onClick = onVerDetallesClick,
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(10.dp),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    androidx.compose.ui.graphics.Color(0xFFBFDBFE)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = androidx.compose.ui.graphics.Color.White,
+                                    contentColor = androidx.compose.ui.graphics.Color(0xFF1D61FF)
+                                )
+                            ) {
+                                Text("Ver detalles", fontWeight = FontWeight.SemiBold)
+                            }
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
 }
+
