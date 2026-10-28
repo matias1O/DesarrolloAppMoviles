@@ -119,26 +119,25 @@ fun NuevoLevantamientoPantalla(
                     }
 
                     // Botón Guardar levantamiento (azul relleno)
+                    // Botón Guardar levantamiento (azul relleno)
                     Button(
                         onClick = {
-                            if (idRack.isNotBlank() && nombreRack.isNotBlank()) {
-                                val nuevoRack = Rack(
-                                    id = idRack,
-                                    nombre = nombreRack,
-                                    area = areaLaboratorio,
-                                    fecha = fecha,
-                                    inspector = inspector,
-                                    estado = estadoSeleccionado,
-                                    componentes = listOf(
-                                        Componente(
-                                            nombre = "$categoriaSeleccionada - $descripcionComponente",
-                                            cantidad = cantidadComponente.toIntOrNull() ?: 1,
-                                            estado = "Operativo"
-                                        )
+                            val nuevoRack = Rack(
+                                id = idRack.trim().ifBlank { "RACK-00" + (10..99).random() },
+                                nombre = nombreRack.trim().ifBlank { "Rack Nuevo" },
+                                area = areaLaboratorio.trim().ifBlank { "Área General" },
+                                fecha = fecha,
+                                inspector = inspector,
+                                estado = estadoSeleccionado,
+                                componentes = listOf(
+                                    Componente(
+                                        nombre = "$categoriaSeleccionada - ${descripcionComponente.ifBlank { "General" }}",
+                                        cantidad = cantidadComponente.toIntOrNull() ?: 1,
+                                        estado = "Operativo"
                                     )
                                 )
-                                onGuardarClick(nuevoRack)
-                            }
+                            )
+                            onGuardarClick(nuevoRack)
                         },
                         modifier = Modifier
                             .weight(1.3f)
@@ -153,6 +152,7 @@ fun NuevoLevantamientoPantalla(
                             fontSize = 15.sp
                         )
                     }
+
                 }
             }
         }
