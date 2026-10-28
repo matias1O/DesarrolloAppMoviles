@@ -87,6 +87,14 @@ fun TarjetaPerfil(
                 fontSize = 14.sp
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = perfil.correo,
+                color = Color(0xFF64748B),
+                fontSize = 13.sp
+            )
+
         }
 
     }

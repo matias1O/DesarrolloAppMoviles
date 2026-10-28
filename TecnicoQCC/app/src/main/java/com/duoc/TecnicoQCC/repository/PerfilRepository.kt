@@ -13,9 +13,9 @@ class PerfilRepository {
             nombre = codigoUsuario,
             cargo = "Inspector técnico",
             empresa = "CMC360 SPA",
-            correo = "luc.piza@duocuc.cl",
-            evaluacionesCompletadas = 28,
-            racksRevisados = 16
+            correo = codigoUsuario.take(3).uppercase() + ".QCC@gmail.com",
+            evaluacionesCompletadas = 0,
+            racksRevisados = 0
         )
     }
 
