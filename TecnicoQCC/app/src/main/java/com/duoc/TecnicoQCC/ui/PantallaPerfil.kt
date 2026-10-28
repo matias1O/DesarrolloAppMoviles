@@ -1,9 +1,11 @@
 package com.duoc.TecnicoQCC.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
@@ -24,7 +26,9 @@ import com.duoc.TecnicoQCC.viewmodel.PerfilViewModel
 @Composable
 fun PantallaPerfil(
     viewModel: PerfilViewModel = viewModel(),
-    onVolverAInicio: () -> Unit = {}
+    onVolverAInicio: () -> Unit = {},
+    onVerPerfilCompleto: () -> Unit = {},
+    onCerrarSesion: () -> Unit = {}
 ) {
     val perfil by viewModel.perfil.collectAsState()
     val opcionesMenu by viewModel.opcionesMenu.collectAsState()
@@ -115,6 +119,48 @@ fun PantallaPerfil(
                     FilaOpcionMenu(
                         opcion = opcion,
                         onClick = { /* Próximamente navegación */ }
+                    )
+                }
+            }
+
+            // 5. Botón Ver perfil completo
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = onVerPerfilCompleto,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
+                ) {
+                    Text(
+                        text = "Ver perfil completo",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+
+            // 6. Botón Cerrar sesión (borra el código guardado en Room y vuelve al login)
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { viewModel.cerrarSesion(onCerrarSesion) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, Color(0xFFFCA5A5)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB91C1C))
+                ) {
+                    Text(
+                        text = "Cerrar sesión",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }

@@ -6,17 +6,16 @@ import com.duoc.TecnicoQCC.model.PerfilUsuario
 class PerfilRepository {
 
 
-    fun obtenerPerfilUsuario(): PerfilUsuario{
+    fun obtenerPerfilUsuario(codigoUsuario: String): PerfilUsuario {
         return PerfilUsuario(
-            inicialesAvatar = "\uD83D\uDC64",
+            inicialesAvatar = if (codigoUsuario.isNotEmpty()) codigoUsuario.take(2).uppercase() else "\uD83D\uDC64",
             tipoPerfil = "PERFIL TÉCNICO",
-            nombre = "Lucas Pizarro",
-            cargo = "Inspecctor técnico",
+            nombre = codigoUsuario,
+            cargo = "Inspector técnico",
             empresa = "CMC360 SPA",
-            correo = "luc.piza@duocuc,cl",
+            correo = "luc.piza@duocuc.cl",
             evaluacionesCompletadas = 28,
             racksRevisados = 16
-
         )
     }
 

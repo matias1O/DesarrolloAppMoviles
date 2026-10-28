@@ -28,20 +28,8 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
     private fun cargarDatos() {
         viewModelScope.launch {
             usuarioDao.observar().collect { usuario ->
-                val nombreGuardado = usuario?.codigoUsuario ?: ""
-                val perfilBase = repository.obtenerPerfilUsuario()
-
-                _perfil.value = perfilBase?.copy(nombre = nombreGuardado)
-                    ?: PerfilUsuario(
-                        nombre = nombreGuardado,
-                        correo = "usuario@tecnicoqcc.cl",
-                        empresa = "Duoc UC / QCC",
-                        inicialesAvatar = if (nombreGuardado.isNotEmpty()) nombreGuardado.take(2).uppercase() else "TQ",
-                        tipoPerfil = "Técnico Operativo",
-                        cargo = "Técnico QCC",
-                        evaluacionesCompletadas = 8,
-                        racksRevisados = 12
-                    )
+                val codigo = usuario?.codigoUsuario ?: ""
+                _perfil.value = repository.obtenerPerfilUsuario(codigo)
             }
         }
         _opcionesMenu.value = repository.obtenerOpcionesMenu()
