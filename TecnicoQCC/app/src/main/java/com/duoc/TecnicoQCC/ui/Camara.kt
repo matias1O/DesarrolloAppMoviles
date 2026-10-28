@@ -4,6 +4,7 @@ import android.Manifest
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -38,6 +39,13 @@ fun CamaraScreen(onVolverClick: () -> Unit) {
         if (success && imageUri != null) {
             val bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             bitmap = bmp
+
+            // Mensaje de confirmación al tomar la foto
+            Toast.makeText(
+                context,
+                "El qr se ha obtenido correctamente",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
