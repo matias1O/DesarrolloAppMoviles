@@ -7,18 +7,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.duoc.TecnicoQCC.model.AppDatabase
+import com.duoc.TecnicoQCC.viewmodel.RackViewModel
 
 @Composable
 fun AppNavegacion() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val usuarioDao = remember { AppDatabase.obtener(context).usuarioDao() }
+
+    // Instancia única y compartida del ViewModel de racks
+    val rackViewModel: RackViewModel = viewModel(
+        viewModelStoreOwner = (context as androidx.activity.ComponentActivity)
+    )
 
     // Código guardado en Room (null si no hay sesión) y si ya terminamos de leerlo
     var codigoGuardado by remember { mutableStateOf<String?>(null) }
@@ -62,6 +69,7 @@ fun AppNavegacion() {
 
             InicioScreen(
                 nombreUsuario = nombre,
+                rackViewModel = rackViewModel,
                 onIrAPerfil = { navController.navigate("perfil") },
                 onCerrarSesion = {
                     navController.navigate("login") {
@@ -84,6 +92,7 @@ fun AppNavegacion() {
             NuevoLevantamientoPantalla(
                 onVolverClick = { navController.popBackStack() },
                 onGuardarClick = { nuevoRack ->
+                    rackViewModel.agregarRack((nuevoRack))
                     navController.popBackStack()
                 }
             )
