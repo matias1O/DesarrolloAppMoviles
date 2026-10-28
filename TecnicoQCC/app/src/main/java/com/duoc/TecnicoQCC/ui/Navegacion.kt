@@ -1,44 +1,35 @@
 package com.duoc.TecnicoQCC.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.navigation.NavType
-import com.duoc.TecnicoQCC.repository.UserPreferences
-import androidx.compose.runtime.getValue
+import com.duoc.TecnicoQCC.model.AppDatabase
 
 @Composable
 fun AppNavegacion() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val userPreferences = remember { UserPreferences(context) }
+    val usuarioDao = remember { AppDatabase.obtener(context).usuarioDao() }
 
-    // 1. Iniciamos los estados como "null" para esperar a leer la memoria
-    val estaLogueado by userPreferences.estaLogueado.collectAsState(initial = null)
-    val nombreGuardado by userPreferences.nombreUsuario.collectAsState(initial = null)
+    // null = todavía leyendo Room
+    var pantallaInicial by remember { mutableStateOf<String?>(null) }
 
-    // 2. Si todavía son null, mostramos un circulo de carga y ESPERAMOS
-    if (estaLogueado == null || nombreGuardado == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
+    LaunchedEffect(Unit) {
+        val usuario = usuarioDao.obtener()
+        pantallaInicial = usuario?.let { "inicio/${it.codigoUsuario}" } ?: "login"
     }
 
-    // Una ves se tiene los datos se arma la ruta
-    val pantallaInicial = if (estaLogueado == true) "inicio/$nombreGuardado" else "login"
+    // Hasta que Room responda no se crea el NavHost
+    val destinoInicial = pantallaInicial ?: return
 
-    NavHost(navController = navController, startDestination = pantallaInicial) {
+    NavHost(navController = navController, startDestination = destinoInicial) {
 
         composable("login") {
             QCCLoginScreenSimple(
@@ -50,12 +41,9 @@ fun AppNavegacion() {
             )
         }
 
-
-        composable(
-            route = "inicio/{nombreUsuario}",
-            arguments = listOf(navArgument("nombreUsuario") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val nombre = backStackEntry.arguments?.getString("nombreUsuario")?.takeIf { it.isNotBlank() } ?: "Usuario"
+        //ruta de inicio unificada con todas las acciones
+        composable("inicio/{nombreUsuario}") { backStackEntry ->
+            val nombre = backStackEntry.arguments?.getString("nombreUsuario") ?: "Usuario"
 
             InicioScreen(
                 nombreUsuario = nombre,
@@ -66,8 +54,7 @@ fun AppNavegacion() {
                     }
                 },
                 onNuevoLevantamiento = { navController.navigate("nuevo_levantamiento") },
-                onVerDetallesClick = { navController.navigate("detalle_rack") },
-                onAbrirCamara = { navController.navigate("camara") }
+                onVerDetallesClick = { navController.navigate("detalle_rack") }
             )
         }
 
@@ -89,22 +76,6 @@ fun AppNavegacion() {
         composable("detalle_rack"){
             DetalleRackPantalla(
                 onVolverClick = { navController.popBackStack() }
-            )
-        }
-
-        composable("camara") {
-            CamaraScreen(
-                onVolverClick = { navController.popBackStack() }
-            )
-        }
-        composable("login") {
-            QCCLoginScreenSimple(
-                onLoginSuccess = { nombreIngresado ->
-                    navController.navigate("inicio/$nombreIngresado") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                },
-                onAbrirCamara = { navController.navigate("camara") }
             )
         }
     }

@@ -3,18 +3,17 @@ package com.duoc.TecnicoQCC.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.duoc.TecnicoQCC.model.AppDatabase
 import com.duoc.TecnicoQCC.model.OpcionMenu
 import com.duoc.TecnicoQCC.model.PerfilUsuario
 import com.duoc.TecnicoQCC.repository.PerfilRepository
-import com.duoc.TecnicoQCC.repository.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PerfilViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val userPreferences = UserPreferences(application)
     private val repository = PerfilRepository()
+    private val usuarioDao = AppDatabase.obtener(application).usuarioDao()
 
     private val _perfil = MutableStateFlow<PerfilUsuario?>(null)
     val perfil: StateFlow<PerfilUsuario?> = _perfil
@@ -28,7 +27,8 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun cargarDatos() {
         viewModelScope.launch {
-            userPreferences.nombreUsuario.collect { nombreGuardado ->
+            usuarioDao.observar().collect { usuario ->
+                val nombreGuardado = usuario?.codigoUsuario ?: ""
                 val perfilBase = repository.obtenerPerfilUsuario()
 
                 _perfil.value = perfilBase?.copy(nombre = nombreGuardado)
@@ -49,7 +49,7 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cerrarSesion(onSesionCerrada: () -> Unit) {
         viewModelScope.launch {
-            userPreferences.cerrarSesion()
+            usuarioDao.borrarTodo()
             onSesionCerrada()
         }
     }

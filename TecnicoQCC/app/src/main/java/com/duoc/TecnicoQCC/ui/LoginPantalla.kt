@@ -20,7 +20,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.duoc.TecnicoQCC.R // <-- Importante para acceder a tus recursos (res)
-import com.duoc.TecnicoQCC.repository.UserPreferences
+import com.duoc.TecnicoQCC.model.AppDatabase
+import com.duoc.TecnicoQCC.model.UsuarioEntity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -33,7 +34,7 @@ fun QCCLoginScreenSimple(
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val userPreferences = remember { UserPreferences(context) }
+    val usuarioDao = remember { AppDatabase.obtener(context).usuarioDao() }
 
     Box(
         modifier = Modifier
@@ -116,7 +117,7 @@ fun QCCLoginScreenSimple(
                     onClick = {
                         if (codigoUsuario.isNotBlank()) {
                             scope.launch {
-                                userPreferences.guardarSesion(codigoUsuario)
+                                usuarioDao.guardar(UsuarioEntity(codigoUsuario))
                                 onLoginSuccess(codigoUsuario)
                             }
                         }

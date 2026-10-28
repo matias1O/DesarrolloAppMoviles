@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.duoc.TecnicoQCC.repository.UserPreferences
+import com.duoc.TecnicoQCC.model.AppDatabase
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +35,7 @@ fun InicioScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val userPreferences = remember { UserPreferences(context) }
+    val usuarioDao = remember { AppDatabase.obtener(context).usuarioDao() }
 
     Scaffold(
         topBar = {
@@ -54,7 +54,7 @@ fun InicioScreen(
                     IconButton(
                         onClick = {
                             scope.launch {
-                                userPreferences.cerrarSesion()
+                                usuarioDao.borrarTodo()
                                 onCerrarSesion()
                             }
                         }
