@@ -84,7 +84,19 @@ fun AppNavegacion() {
 
         composable("perfil") {
             PantallaPerfil(
-                onVolverAInicio = { navController.popBackStack() }
+                onVolverAInicio = { navController.popBackStack() },
+                onVerPerfilCompleto = { navController.navigate("perfil_completo") },
+                onCerrarSesion = {
+                    navController.navigate("login") {
+                        popUpTo(0) // Limpia el historial
+                    }
+                }
+            )
+        }
+
+        composable("perfil_completo") {
+            PerfilCompletoPantalla(
+                onVolverClick = { navController.popBackStack() }
             )
         }
 
