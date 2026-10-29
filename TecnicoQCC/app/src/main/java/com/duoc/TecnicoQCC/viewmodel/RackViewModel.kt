@@ -13,7 +13,7 @@ class RackViewModel : ViewModel() {
             nombre = "Sala principal",
             area = "Zona A · LAB-QCC-02",
             fecha = "18 mar 2026",
-            inspector = "Laura Mendoza",
+            inspector = "Guillermo Villacura",
             estado = "Completada"
         )
     )
