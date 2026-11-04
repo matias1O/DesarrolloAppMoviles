@@ -10,6 +10,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao
 
+    //Solo crear una instacia en la aplicación y que se mantenga.
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null

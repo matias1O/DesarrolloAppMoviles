@@ -26,6 +26,7 @@ MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    //Donde se inicia la aplicación y se conecta el app con el desarrollo.
                     AppNavegacion()
                 }
             }

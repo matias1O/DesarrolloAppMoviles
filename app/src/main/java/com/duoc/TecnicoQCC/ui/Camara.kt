@@ -30,7 +30,9 @@ import java.io.File
 @Composable
 fun CamaraScreen(onVolverClick: () -> Unit) {
     val context = LocalContext.current
+    //ubicación de donde se guarda la imagen
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    //donde se guarda la imagen
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     val takePictureLauncher = rememberLauncherForActivityResult(
@@ -49,6 +51,7 @@ fun CamaraScreen(onVolverClick: () -> Unit) {
         }
     }
 
+    //Permiso para utilizar la camara
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
