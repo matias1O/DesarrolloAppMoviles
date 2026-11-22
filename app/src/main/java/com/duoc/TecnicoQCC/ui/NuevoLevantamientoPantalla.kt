@@ -39,6 +39,10 @@ fun NuevoLevantamientoPantalla(
     var expandedEstado by remember { mutableStateOf(false) }
     val estados = listOf("En progreso", "Completada", "Pendiente")
 
+    // GPS
+    var latitud by remember { mutableStateOf<Double?>(null) }
+    var longitud by remember { mutableStateOf<Double?>(null) }
+
     // Paso 3
     var categoriaSeleccionada by remember { mutableStateOf("Servidor") }
     var expandedCategoria by remember { mutableStateOf(false) }
@@ -58,7 +62,7 @@ fun NuevoLevantamientoPantalla(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = onVolverClick, // Vuelve atrás al hacer clic
+                    onClick = onVolverClick,
                     modifier = Modifier
                         .size(40.dp)
                         .background(Color(0xFF1E293B), shape = RoundedCornerShape(10.dp))
@@ -89,7 +93,7 @@ fun NuevoLevantamientoPantalla(
             }
         },
         bottomBar = {
-            // Footer fijo abajo (position: fixed; bottom: 0)
+            // Footer fijo abajo
             Surface(
                 color = Color.White,
                 shadowElevation = 10.dp
@@ -102,7 +106,7 @@ fun NuevoLevantamientoPantalla(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Botón Cancelar (borde gris)
+                    // Botón Cancelar
                     OutlinedButton(
                         onClick = onVolverClick,
                         modifier = Modifier
@@ -118,8 +122,7 @@ fun NuevoLevantamientoPantalla(
                         )
                     }
 
-                    // Botón Guardar levantamiento (azul relleno)
-                    // Botón Guardar levantamiento (azul relleno)
+                    // Botón Guardar levantamiento
                     Button(
                         onClick = {
                             val nuevoRack = Rack(
@@ -152,12 +155,11 @@ fun NuevoLevantamientoPantalla(
                             fontSize = 15.sp
                         )
                     }
-
                 }
             }
         }
     ) { paddingValues ->
-        // Contenido scrolleable central (overflow-y: auto)
+        // Contenido scrolleable central
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -325,6 +327,16 @@ fun NuevoLevantamientoPantalla(
                     }
                 }
             }
+
+            // ==================== TARJETA GPS ====================
+            TarjetaGps(
+                latitud = latitud,
+                longitud = longitud,
+                onUbicacionObtenida = { lat, lng ->
+                    latitud = lat
+                    longitud = lng
+                }
+            )
 
             // ==================== PASO 3 ====================
             Card(
