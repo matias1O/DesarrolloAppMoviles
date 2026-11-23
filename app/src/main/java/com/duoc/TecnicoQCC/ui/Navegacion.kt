@@ -112,7 +112,7 @@ fun AppNavegacion() {
                     }
                 },
                 onNuevoLevantamiento = { navController.navigate("nuevo_levantamiento") },
-                onVerDetallesClick = { navController.navigate("detalle_rack") },
+                onVerDetallesClick = { rackId -> navController.navigate("detalle_rack/$rackId") },
                 onAbrirCamara = { navController.navigate("camara") }
             )
         }
@@ -145,10 +145,23 @@ fun AppNavegacion() {
             )
         }
 
-        composable("detalle_rack") {
-            DetalleRackPantalla(
-                onVolverClick = { navController.popBackStack() }
-            )
+        composable(
+            route = "detalle_rack/{rackId}",
+            arguments = listOf(navArgument("rackId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val rackId = backStackEntry.arguments?.getString("rackId") ?: ""
+            val rack = rackViewModel.racks.find { it.id == rackId }
+
+            if (rack != null) {
+                DetalleRackPantalla(
+                    rack = rack,
+                    onVolverClick = { navController.popBackStack() },
+                    onEliminarClick = {
+                        rackViewModel.eliminarRack(rack.id)
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         composable("camara") {
