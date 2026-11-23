@@ -83,4 +83,22 @@ class RackViewModel : ViewModel() {
             }
         }
     }
+
+    // PUT: Actualiza un rack en Xano y en la lista local
+    fun actualizarRack(id: String, rackEditado: Rack) {
+        viewModelScope.launch {
+            try {
+                val actualizado = repository.actualizarRack(id, rackEditado)
+                if (actualizado != null) {
+                    val posicion = racks.indexOfFirst { it.id == id }
+                    if (posicion != -1) {
+                        racks[posicion] = actualizado
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("RackViewModel", "Error PUT rack", e)
+            }
+        }
+    }
+
 }
