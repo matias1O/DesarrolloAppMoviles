@@ -22,19 +22,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.duoc.TecnicoQCC.R
 import com.duoc.TecnicoQCC.model.AppDatabase
 import com.duoc.TecnicoQCC.model.UsuarioEntity
+import com.duoc.TecnicoQCC.viewmodel.PerfilViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun QCCLoginScreenSimple(
     onLoginSuccess: (String) -> Unit,
-    onAbrirCamara: () -> Unit = {}
+    onAbrirCamara: () -> Unit = {},
+    perfilViewModel: PerfilViewModel = viewModel()
 ) {
     var codigoUsuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf<String?>(null) }
+    var cargando by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -92,9 +96,9 @@ fun QCCLoginScreenSimple(
                     value = codigoUsuario,
                     onValueChange = {
                         codigoUsuario = it
-                        if (mensajeError != null) mensajeError = null // Se quita el error al escribir
+                        if (mensajeError != null) mensajeError = null
                     },
-                    label = { Text("Código de usuario") },
+                    label = { Text("Usuario o correo") },
                     leadingIcon = {
                         Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     },
@@ -111,7 +115,7 @@ fun QCCLoginScreenSimple(
                     value = password,
                     onValueChange = {
                         password = it
-                        if (mensajeError != null) mensajeError = null // Se quita el error al escribir
+                        if (mensajeError != null) mensajeError = null
                     },
                     label = { Text("Contraseña") },
                     leadingIcon = {
@@ -145,7 +149,7 @@ fun QCCLoginScreenSimple(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botón de Ingreso con Validación
+                // Botón de Ingreso con Validación contra Xano
                 Button(
                     onClick = {
                         when {
@@ -160,19 +164,36 @@ fun QCCLoginScreenSimple(
                             }
                             else -> {
                                 mensajeError = null
-                                scope.launch {
-                                    usuarioDao.guardar(UsuarioEntity(codigoUsuario.trim()))
-                                    onLoginSuccess(codigoUsuario.trim())
+                                cargando = true
+                                perfilViewModel.validarLogin(codigoUsuario, password) { exito, perfilValido ->
+                                    cargando = false
+                                    if (exito && perfilValido != null) {
+                                        scope.launch {
+                                            usuarioDao.guardar(UsuarioEntity(perfilValido.nombre))
+                                            onLoginSuccess(perfilValido.nombre)
+                                        }
+                                    } else {
+                                        mensajeError = "Usuario o contraseña incorrectos"
+                                    }
                                 }
                             }
                         }
                     },
+                    enabled = !cargando,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Ingresar", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    if (cargando) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(22.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Ingresar", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))

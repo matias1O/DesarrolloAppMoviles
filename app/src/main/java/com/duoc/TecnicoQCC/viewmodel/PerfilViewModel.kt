@@ -21,6 +21,9 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
     private val _opcionesMenu = MutableStateFlow<List<OpcionMenu>>(emptyList())
     val opcionesMenu: StateFlow<List<OpcionMenu>> = _opcionesMenu
 
+    private val _mensajeEstado = MutableStateFlow<String?>(null)
+    val mensajeEstado: StateFlow<String?> = _mensajeEstado
+
     init {
         cargarDatos()
     }
@@ -35,13 +38,65 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
         _opcionesMenu.value = repository.obtenerOpcionesMenu()
     }
 
-    fun guardarPerfilEnNube(nuevoPerfil: PerfilUsuario, onGuardado: () -> Unit = {}) {
+    // Valida usuario y contraseña contra Xano antes de permitir el ingreso
+    fun validarLogin(
+        usuario: String,
+        password: String,
+        onResultado: (Boolean, PerfilUsuario?) -> Unit
+    ) {
         viewModelScope.launch {
-            val perfilCreado = repository.registrarUsuarioEnNube(nuevoPerfil)
-            if (perfilCreado != null) {
-                _perfil.value = perfilCreado
-                onGuardado()
+            val perfilValido = repository.autenticarUsuario(usuario, password)
+            if (perfilValido != null) {
+                _perfil.value = perfilValido
+                onResultado(true, perfilValido)
+            } else {
+                onResultado(false, null)
             }
+        }
+    }
+
+    // Guarda cambios: si el usuario ya tiene id > 0 hace PATCH; si no existe en nube hace POST
+    fun guardarCambiosPerfil(
+        nombre: String,
+        cargo: String,
+        empresa: String,
+        correo: String
+    ) {
+        val actual = _perfil.value ?: return
+        val actualizado = actual.copy(
+            inicialesAvatar = nombre.take(2).uppercase(),
+            nombre = nombre,
+            cargo = cargo,
+            empresa = empresa,
+            correo = correo
+        )
+
+        viewModelScope.launch {
+            val resultado = if (actual.id > 0) {
+                repository.actualizarUsuarioEnNube(actual.id, actualizado)
+            } else {
+                repository.registrarUsuarioEnNube(actualizado)
+            }
+
+            if (resultado != null) {
+                _perfil.value = resultado
+                _mensajeEstado.value = "Perfil sincronizado con Xano"
+            } else {
+                _perfil.value = actualizado
+                _mensajeEstado.value = "No se pudo conectar con Xano"
+            }
+        }
+    }
+
+    // Elimina el perfil en Xano (DELETE) y cierra la sesión local en Room
+    fun eliminarPerfilYCerrarSesion(onSesionCerrada: () -> Unit) {
+        val idActual = _perfil.value?.id ?: 0
+        viewModelScope.launch {
+            if (idActual > 0) {
+                repository.eliminarUsuarioEnNube(idActual)
+            }
+            usuarioDao.borrarTodo()
+            onSesionCerrada()
         }
     }
 
@@ -50,5 +105,9 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
             usuarioDao.borrarTodo()
             onSesionCerrada()
         }
+    }
+
+    fun limpiarMensaje() {
+        _mensajeEstado.value = null
     }
 }

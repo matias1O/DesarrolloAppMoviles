@@ -11,9 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +30,9 @@ fun PantallaPerfil(
 ) {
     val perfil by viewModel.perfil.collectAsState()
     val opcionesMenu by viewModel.opcionesMenu.collectAsState()
+    val mensajeEstado by viewModel.mensajeEstado.collectAsState()
+
+    var mostrarDialogoEditar by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -60,18 +61,16 @@ fun PantallaPerfil(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // IMPORTANTE: evita que la lista tape la barra superior
+                .padding(paddingValues)
                 .background(Color(0xFFF8FAFC)),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            // 1. Header principal
             item {
                 perfil?.let { datosPerfil ->
                     TarjetaPerfil(perfil = datosPerfil)
                 }
             }
 
-            // 2. Tarjetas de métricas
             item {
                 perfil?.let { datosPerfil ->
                     Row(
@@ -101,7 +100,6 @@ fun PantallaPerfil(
                 }
             }
 
-            // 3. Título de sección
             item {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
@@ -113,17 +111,19 @@ fun PantallaPerfil(
                 )
             }
 
-            // 4. Lista de opciones del menú
             items(opcionesMenu) { opcion ->
                 Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                     FilaOpcionMenu(
                         opcion = opcion,
-                        onClick = { /* Próximamente navegación */ }
+                        onClick = {
+                            if (opcion.ruta == "info_personal") {
+                                mostrarDialogoEditar = true
+                            }
+                        }
                     )
                 }
             }
 
-            // 5. Botón Ver perfil completo
             item {
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
@@ -144,7 +144,7 @@ fun PantallaPerfil(
                 }
             }
 
-            // 6. Botón Cerrar sesión (borra el código guardado en Room y vuelve al login)
+            // Botón Cerrar sesión
             item {
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedButton(
@@ -154,8 +154,8 @@ fun PantallaPerfil(
                         .padding(horizontal = 16.dp)
                         .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, Color(0xFFFCA5A5)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB91C1C))
+                    border = BorderStroke(1.dp, Color(0xFFCBD5E1)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF334155))
                 ) {
                     Text(
                         text = "Cerrar sesión",
@@ -164,6 +164,81 @@ fun PantallaPerfil(
                     )
                 }
             }
+
+            // Botón Eliminar perfil en la nube (DELETE)
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { viewModel.eliminarPerfilYCerrarSesion(onCerrarSesion) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, Color(0xFFFCA5A5)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB91C1C))
+                ) {
+                    Text(
+                        text = "Eliminar cuenta de la nube",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+
+        // Diálogo para Crear (POST) o Actualizar (PATCH) datos del perfil en Xano
+        if (mostrarDialogoEditar && perfil != null) {
+            var nombreEdit by remember { mutableStateOf(perfil!!.nombre) }
+            var cargoEdit by remember { mutableStateOf(perfil!!.cargo) }
+            var empresaEdit by remember { mutableStateOf(perfil!!.empresa) }
+            var correoEdit by remember { mutableStateOf(perfil!!.correo) }
+
+            AlertDialog(
+                onDismissRequest = { mostrarDialogoEditar = false },
+                title = { Text("Editar Información Personal") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = nombreEdit,
+                            onValueChange = { nombreEdit = it },
+                            label = { Text("Nombre") },
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = cargoEdit,
+                            onValueChange = { cargoEdit = it },
+                            label = { Text("Cargo") },
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = empresaEdit,
+                            onValueChange = { empresaEdit = it },
+                            label = { Text("Empresa") },
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = correoEdit,
+                            onValueChange = { correoEdit = it },
+                            label = { Text("Correo") },
+                            singleLine = true
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.guardarCambiosPerfil(nombreEdit, cargoEdit, empresaEdit, correoEdit)
+                        mostrarDialogoEditar = false
+                    }) {
+                        Text("Guardar en Xano")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { mostrarDialogoEditar = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }
