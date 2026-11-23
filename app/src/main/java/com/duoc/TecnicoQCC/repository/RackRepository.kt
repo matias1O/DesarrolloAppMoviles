@@ -16,4 +16,9 @@ class RackRepository {
     suspend fun eliminarRack(id: String): Boolean {
         return RetrofitInstance.api.eliminarRack(id).isSuccessful
     }
+
+    suspend fun actualizarRack(id: String, rack: Rack): Rack? {
+        val response = RetrofitInstance.api.actualizarRack(id, rack)
+        return if (response.isSuccessful) response.body() else null
+    }
 }
