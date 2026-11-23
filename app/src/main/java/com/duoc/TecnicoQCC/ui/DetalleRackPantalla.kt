@@ -12,6 +12,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +45,11 @@ fun DetalleRackPantalla(
         )
     ),
     onVolverClick: () -> Unit = {},
-    onEliminarClick: () -> Unit = {}
+    onEliminarClick: () -> Unit = {},
+    onGuardarEdicion: (Rack) -> Unit = {}
 ) {
+
+    var mostrarEditar by remember { mutableStateOf(false)}
     Scaffold(
         containerColor = Color(0xFFF8FAFC)
     ) { paddingValues ->
@@ -223,7 +230,7 @@ fun DetalleRackPantalla(
             }
 
             OutlinedButton(
-                onClick = { },
+                onClick = { mostrarEditar = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -254,6 +261,33 @@ fun DetalleRackPantalla(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            if (mostrarEditar) {
+                var nombre by remember { mutableStateOf(rack.nombre) }
+                var area by remember { mutableStateOf(rack.area) }
+                var inspector by remember { mutableStateOf(rack.inspector) }
+
+                AlertDialog(
+                    onDismissRequest = { mostrarEditar = false },
+                    title = { Text("Editar información") },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
+                            OutlinedTextField(value = area, onValueChange = { area = it }, label = { Text("Área") })
+                            OutlinedTextField(value = inspector, onValueChange = { inspector = it }, label = { Text("Inspector") })
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            mostrarEditar = false
+                            onGuardarEdicion(rack.copy(nombre = nombre, area = area, inspector = inspector))
+                        }) { Text("Guardar") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { mostrarEditar = false }) { Text("Cancelar") }
+                    }
+                )
+            }
         }
     }
 }
