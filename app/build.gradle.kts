@@ -67,5 +67,18 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")
 
+    // Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
 
+// JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
+// MockK
+    testImplementation("io.mockk:mockk:1.13.10")
+
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
