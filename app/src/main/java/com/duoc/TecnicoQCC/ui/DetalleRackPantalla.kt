@@ -40,7 +40,8 @@ fun DetalleRackPantalla(
             Componente("Firewall", 1, "Pendiente")
         )
     ),
-    onVolverClick: () -> Unit = {}
+    onVolverClick: () -> Unit = {},
+    onEliminarClick: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = Color(0xFFF8FAFC)
@@ -239,6 +240,17 @@ fun DetalleRackPantalla(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Ver evidencia", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+            }
+
+            Button(
+                onClick = onEliminarClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text("Eliminar rack", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
