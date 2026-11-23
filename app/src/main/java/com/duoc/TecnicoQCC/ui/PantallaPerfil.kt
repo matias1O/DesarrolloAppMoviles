@@ -230,7 +230,7 @@ fun PantallaPerfil(
                         viewModel.guardarCambiosPerfil(nombreEdit, cargoEdit, empresaEdit, correoEdit)
                         mostrarDialogoEditar = false
                     }) {
-                        Text("Guardar en Xano")
+                        Text("Guardar")
                     }
                 },
                 dismissButton = {
