@@ -159,7 +159,11 @@ fun AppNavegacion() {
                     onEliminarClick = {
                         rackViewModel.eliminarRack(rack.id)
                         navController.popBackStack()
+                    },
+                    onGuardarEdicion = { rackEditado ->
+                        rackViewModel.actualizarRack(rack.id, rackEditado)
                     }
+
                 )
             }
         }
