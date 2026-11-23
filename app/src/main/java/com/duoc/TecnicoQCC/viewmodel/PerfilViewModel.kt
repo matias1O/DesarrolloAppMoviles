@@ -35,6 +35,16 @@ class PerfilViewModel(application: Application) : AndroidViewModel(application) 
         _opcionesMenu.value = repository.obtenerOpcionesMenu()
     }
 
+    fun guardarPerfilEnNube(nuevoPerfil: PerfilUsuario, onGuardado: () -> Unit = {}) {
+        viewModelScope.launch {
+            val perfilCreado = repository.registrarUsuarioEnNube(nuevoPerfil)
+            if (perfilCreado != null) {
+                _perfil.value = perfilCreado
+                onGuardado()
+            }
+        }
+    }
+
     fun cerrarSesion(onSesionCerrada: () -> Unit) {
         viewModelScope.launch {
             usuarioDao.borrarTodo()
