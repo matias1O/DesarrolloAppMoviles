@@ -10,7 +10,7 @@ data class Componente(
 )
 
 data class Rack(
-    val id: String,
+    val id: String = "",
     val nombre: String,
     val area: String,
     val fecha: String,
