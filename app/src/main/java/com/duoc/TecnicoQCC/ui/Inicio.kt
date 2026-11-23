@@ -30,7 +30,7 @@ fun InicioScreen(
     rackViewModel: com.duoc.TecnicoQCC.viewmodel.RackViewModel,
     onIrAPerfil: () -> Unit = {},
     onNuevoLevantamiento: () -> Unit = {},
-    onVerDetallesClick: () -> Unit = {},
+    onVerDetallesClick: (String) -> Unit,
     onCerrarSesion: ()-> Unit = {},
     onAbrirCamara: () -> Unit = {}
 ) {
@@ -322,7 +322,7 @@ fun InicioScreen(
                             Spacer(modifier = Modifier.height(12.dp))
 
                             OutlinedButton(
-                                onClick = onVerDetallesClick,
+                                onClick = { onVerDetallesClick(rack.id) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(10.dp),
                                 border = androidx.compose.foundation.BorderStroke(
