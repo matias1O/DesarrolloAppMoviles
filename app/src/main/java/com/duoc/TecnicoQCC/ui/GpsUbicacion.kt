@@ -34,6 +34,7 @@ fun TarjetaGps(
     val fusedClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     var cargando by remember { mutableStateOf(false) }
 
+    // Obtiene las coordenadas actuales del GPS
     @SuppressLint("MissingPermission")
     fun obtenerUbicacion() {
         cargando = true
@@ -53,6 +54,7 @@ fun TarjetaGps(
         }
     }
 
+    // Solicita los permisos de ubicación
     val permisoLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permisos ->
@@ -65,6 +67,7 @@ fun TarjetaGps(
         }
     }
 
+    // Interfaz visual de la tarjeta GPS
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(18.dp),
@@ -85,6 +88,7 @@ fun TarjetaGps(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Botón principal para lanzar la solicitud de permisos
             Button(
                 onClick = {
                     permisoLauncher.launch(
@@ -103,6 +107,7 @@ fun TarjetaGps(
                 Text(if (cargando) "Obteniendo..." else "Obtener ubicación")
             }
 
+            // Abre la ubicación registrada en una app externa de mapas
             if (latitud != null && longitud != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(

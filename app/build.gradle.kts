@@ -60,6 +60,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    //GPS
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
     //Dependecias de la herramienta ksp
@@ -76,6 +78,9 @@ dependencies {
 
     // MockK
     testImplementation("io.mockk:mockk:1.13.10")
+
+
+    //ENDPOINTS
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
